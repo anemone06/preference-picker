@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0a0c">
+  <meta name="description" content="48 种反派特质，逐轮选择你的偏好。随时查看全局、改选和继续。">
+  <title>反派偏好 · 偏爱有迹可循</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%230b0a0c'/%3E%3Cpath d='M8 9l8 15 8-15M8 9l8 5 8-5' fill='none' stroke='%23ff4159' stroke-width='2.5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script src="data.js" defer></script>
+  <script src="engine.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="反派偏好，继续选择"><span class="brand-mark" aria-hidden="true">♜</span><span>反派偏好<small>VILLAIN PREFERENCE</small></span></a>
+    <nav class="view-switch glass" aria-label="切换视图">
+      <button id="choose-view" class="active">逐轮选择</button>
+      <button id="overview-view"><span aria-hidden="true">⌘</span> 全局视图</button>
+    </nav>
+    <button id="reset" class="icon-button" aria-label="重新开始" title="重新开始">↺</button>
+  </header>
+  <main id="main"></main>
+  <footer class="footer">
+    <span class="save-status" id="save-status">进度保存在此浏览器</span>
+    <span class="footer-progress"><span id="progress-text">已选择 0 / 46</span><span class="progress-track"><span id="progress-fill"></span></span></span>
+  </footer>
+  <div id="notice" class="notice glass" role="status" hidden><span id="notice-text"></span><button id="undo">撤销</button><button id="dismiss-notice" aria-label="关闭提示">×</button></div>
+  <dialog id="reset-dialog" class="glass"><form method="dialog"><span class="eyebrow">重新选择</span><h2>让偏好重新出发？</h2><p>当前所有选择和最终结果都将清空。</p><div class="dialog-actions"><button value="cancel" class="secondary">保留进度</button><button value="reset" class="primary">重新开始</button></div></form></dialog>
+</body>
+</html>

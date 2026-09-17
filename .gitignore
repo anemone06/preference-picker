@@ -1,0 +1,9 @@
+# 本机临时文件与 Python 缓存
+.DS_Store
+__pycache__/
+*.py[cod]
+
+# 本地环境配置与日志
+.env
+.env.*
+*.log
