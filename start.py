@@ -30,7 +30,7 @@ def main():
         parser.error("端口必须在 0 到 65535 之间")
 
     directory = Path(__file__).resolve().parent
-    required = ("index.html", "style.css", "data.js", "engine.js", "app.js")
+    required = ("index.html", "style.css", "data.js", "engine.js", "export.js", "app.js")
     missing = [name for name in required if not (directory / name).is_file()]
     if missing:
         print("项目文件缺失，请完整解压 ZIP：" + "、".join(missing), flush=True)

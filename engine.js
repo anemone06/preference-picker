@@ -22,6 +22,14 @@
   const candidates = (state, id) => byId[id]?.sources.map(source => source.option || state.winners[source.node] || null) || [];
   const ready = (state, id) => candidates(state, id).length > 0 && candidates(state, id).every(Boolean);
   const next = state => nodes.find(node => !state.winners[node.id] && ready(state, node.id));
+  function adjacent(state, id, direction) {
+    const index = nodes.findIndex(node => node.id === id);
+    if (index < 0 || ![-1, 1].includes(direction)) return undefined;
+    for (let i = index + direction; i >= 0 && i < nodes.length; i += direction) {
+      if (ready(state, nodes[i].id)) return nodes[i];
+    }
+    return undefined;
+  }
   function select(state, id, option) {
     const node = byId[id];
     if (!node || !ready(state, id) || !candidates(state, id).includes(option)) throw new Error('当前选项不可选择');
@@ -47,5 +55,5 @@
     }
     return state;
   }
-  root.PreferenceEngine = { rounds, nodes, byId, labels, fresh, candidates, ready, next, select, restore, total: nodes.length, finalId: nodes[nodes.length - 1].id };
+  root.PreferenceEngine = { rounds, nodes, byId, labels, fresh, candidates, ready, next, adjacent, select, restore, total: nodes.length, finalId: nodes[nodes.length - 1].id };
 })(typeof window !== 'undefined' ? window : globalThis);

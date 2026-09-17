@@ -1035,3 +1035,52 @@ main {
     line-height:26px;
   }
 }
+/* 导出与翻题操作在窄屏下保持独立的点击区域。 */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.export-button {
+  border-radius: 100px;
+  padding: 10px 17px;
+  font-size: 14px;
+  color: #ecd6df;
+}
+.export-button:disabled {
+  opacity: .6;
+}
+.question-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 20px;
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.question-nav > span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.question-nav button:disabled {
+  opacity: .32;
+}
+.result-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+@media (max-width: 760px) {
+  .header-actions { gap: 8px; }
+  .export-button { padding: 10px 12px; font-size: 13px; }
+  .question-nav { gap: 10px; padding-top: 18px; }
+  .question-nav .secondary { padding: 11px 15px; font-size: 13px; }
+  .question-nav > span { font-size: 12px; }
+}
+@media (min-width: 761px) and (max-width: 1000px) {
+  .topbar { padding-right: 24px; padding-left: 24px; }
+  .view-switch button { padding-right: 15px; padding-left: 15px; }
+  .brand small { font-size: 10px; }
+}

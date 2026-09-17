@@ -98,6 +98,8 @@
     if (!node || !E.ready(state, current)) { openChoose(); return; }
     const options = E.candidates(state, current);
     const winner = state.winners[current];
+    const previous = E.adjacent(state, current, -1);
+    const following = E.adjacent(state, current, 1);
     main.innerHTML = '<section class="selection fade-in">' + roundStrip(node.round) +
       '<span class="eyebrow">' + (node.round === 4 ? 'THE FINAL THREE' : 'ROUND 0' + (node.round + 1) + ' · ' + roundNames[node.round]) + '</span>' +
       '<h1 tabindex="-1">' + (node.round === 4 ? '最后，留下你的偏爱。' : '哪一种，更让你着迷？') + '</h1>' +
@@ -107,12 +109,15 @@
         '<span class="card-top"><span class="card-letter">' + ['A', 'B', 'C'][i] + '</span><span class="card-id">TRAIT / ' + id.split('-')[1].padStart(2, '0') + '</span></span>' +
         '<span class="card-title">' + escape(E.labels[id]) + '</span><span class="card-bottom">' + (winner === id ? '已选择' : '选择这一项') + '<span class="card-arrow">' + (winner === id ? '✓' : '↗') + '</span></span></button>'
       ).join('') + '</div>' +
-      '<div class="under-cards"><span>第 ' + (node.index + 1) + ' / ' + E.rounds[node.round].length + ' 组</span><span class="keyboard-hint"><kbd class="keycap">1</kbd><kbd class="keycap">2</kbd>' + (options.length === 3 ? '<kbd class="keycap">3</kbd>' : '') + ' 快速选择</span><button class="text-button" id="from-choice-overview">' + (editing ? '返回全局视图' : '查看选择全貌') + ' ↗</button></div></section>';
+      '<div class="under-cards"><span>第 ' + (node.index + 1) + ' / ' + E.rounds[node.round].length + ' 组</span><span class="keyboard-hint"><kbd class="keycap">1</kbd><kbd class="keycap">2</kbd>' + (options.length === 3 ? '<kbd class="keycap">3</kbd>' : '') + ' 快速选择</span><button class="text-button" id="from-choice-overview">' + (editing ? '返回全局视图' : '查看选择全貌') + ' ↗</button></div>' +
+      '<nav class="question-nav" aria-label="题目翻页"><button id="previous-question" class="secondary" ' + (!previous ? 'disabled' : '') + '>← 上一题</button><span>第 ' + (E.nodes.indexOf(node) + 1) + ' / ' + E.total + ' 题</span><button id="next-question" class="secondary" ' + (!following ? 'disabled' : '') + '>下一题 →</button></nav></section>';
     main.querySelectorAll('[data-option]').forEach(button => button.addEventListener('click', event => {
       if (event.detail > 1) return;
       choose(button.dataset.option);
     }));
     $('from-choice-overview').addEventListener('click', openOverview);
+    $('previous-question').addEventListener('click', () => openChoose(previous.id));
+    $('next-question').addEventListener('click', () => openChoose(following.id));
   }
   function choose(option) {
     if (busy || view !== 'choose' || $('reset-dialog').open) return;
@@ -149,8 +154,9 @@
       '<span class="eyebrow">YOUR ULTIMATE PREFERENCE</span><h1 tabindex="-1">偏爱，终于有了名字。</h1><p class="subtext">从 48 种反派特质中，留下你的唯一选择。</p>' +
       '<div class="winner-card"><span class="winner-symbol" aria-hidden="true">♜</span><span class="eyebrow">最终偏好</span><strong>' + escape(E.labels[winner]) + '</strong><span class="winner-id">TRAIT / ' + winner.split('-')[1].padStart(2, '0') + '</span></div>' +
       '<div class="winner-path" aria-label="晋级路径">' + path.map(node => '<span>' + (node.round === 4 ? '最终胜出' : roundNames[node.round]) + '</span>').join('<i aria-hidden="true">→</i>') + '</div>' +
-      '<button class="primary" id="result-overview">回看我的选择 <span aria-hidden="true">↗</span></button></section>';
+      '<div class="result-actions"><button class="secondary" id="review-final">← 上一题</button><button class="primary" id="result-overview">回看我的选择 <span aria-hidden="true">↗</span></button></div></section>';
     $('result-overview').addEventListener('click', openOverview);
+    $('review-final').addEventListener('click', () => openChoose(E.finalId));
   }
 
   const positions = {};
@@ -317,6 +323,31 @@
     graphCleanup = () => controller.abort();
   }
 
+  $('export-result').addEventListener('click', async () => {
+    const button = $('export-result');
+    if (button.disabled) return;
+    button.disabled = true;
+    button.textContent = '生成中…';
+    // 捕获点击这一刻的结果，异步生成期间翻页或改选不会改变本张图片。
+    const snapshot = { version: state.version, winners: { ...state.winners } };
+    try {
+      const blob = await window.PreferenceExport.createPNG(snapshot, { positions, width: graphWidth, height: graphHeight, roundNames });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const date = new Date().toISOString().replace(/[:.]/g, '-');
+      link.href = url;
+      link.download = '反派偏好-' + Object.keys(snapshot.winners).length + '题-' + date + '.png';
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (error) {
+      showNotice('图片生成失败，请重试。你的选择已保留。', Boolean(undoSnapshot));
+    } finally {
+      button.disabled = false;
+      button.textContent = '↓ 导出';
+    }
+  });
   $('choose-view').addEventListener('click', () => openChoose());
   $('overview-view').addEventListener('click', openOverview);
   document.querySelector('.brand').addEventListener('click', event => { event.preventDefault(); openChoose(); });

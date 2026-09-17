@@ -64,3 +64,19 @@ test('按列从上到下推进；全局提前完成合法节点后仍定位最�
   assert.equal(E.next(state).id, 'r0-2');
   assert.equal(E.ready(state, 'r1-0'), true);
 });
+test('翻题按题目顺序跳过候选不全节点，不修改选择', () => {
+  const state = E.fresh();
+  assert.equal(E.adjacent(state, 'r0-0', -1), undefined);
+  assert.equal(E.adjacent(state, 'r0-0', 1).id, 'r0-1');
+  assert.equal(E.adjacent(state, 'r0-23', 1), undefined);
+  let updated = E.select(state, 'r0-0', 'trait-1').state;
+  updated = E.select(updated, 'r0-1', 'trait-3').state;
+  const before = JSON.stringify(updated);
+  assert.equal(E.adjacent(updated, 'r0-23', 1).id, 'r1-0');
+  assert.equal(E.adjacent(updated, 'r1-0', -1).id, 'r0-23');
+  assert.equal(E.adjacent(updated, 'r1-0', 1), undefined);
+  assert.equal(JSON.stringify(updated), before);
+  const done = complete();
+  assert.equal(E.adjacent(done, E.finalId, -1).id, 'r3-2');
+  assert.equal(E.adjacent(done, E.finalId, 1), undefined);
+});

@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="style.css">
   <script src="data.js" defer></script>
   <script src="engine.js" defer></script>
+  <script src="export.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -20,7 +21,7 @@
       <button id="choose-view" class="active">逐轮选择</button>
       <button id="overview-view"><span aria-hidden="true">⌘</span> 全局视图</button>
     </nav>
-    <button id="reset" class="icon-button" aria-label="重新开始" title="重新开始">↺</button>
+    <div class="header-actions"><button id="export-result" class="export-button glass" title="导出当前完整晋级图为 PNG 图片">↓ 导出</button><button id="reset" class="icon-button" aria-label="重新开始" title="重新开始">↺</button></div>
   </header>
   <main id="main"></main>
   <footer class="footer">

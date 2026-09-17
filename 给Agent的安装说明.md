@@ -18,7 +18,7 @@
 - ZIP 已包含最外层目录，避免再次套一个同名目录。
 - 不要放在临时目录或下载软件的临时解压区。
 - 如果目标目录已经存在，先检查内容。不要覆盖已有修改；改用新的目录并告诉用户。
-- 核对目录中包含 `index.html`、`style.css`、`data.js`、`engine.js`、`app.js` 和 `start.py`。
+- 核对目录中包含 `index.html`、`style.css`、`data.js`、`engine.js`、`export.js`、`app.js` 和 `start.py`。
 
 ### 2. 检查 Python
 
